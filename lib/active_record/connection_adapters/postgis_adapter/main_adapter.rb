@@ -173,7 +173,8 @@ module ActiveRecord
           table_definition_.primary_key(options_[:primary_key] || ::ActiveRecord::Base.get_primary_key(table_name_.singularize)) unless options_[:id] == false
           yield table_definition_ if block_given?
           if options_[:force] && table_exists?(table_name_)
-            drop_table(table_name_, options_)
+            #options dropped from rails 3.2+, was never used
+            drop_table(table_name_)
           end
           
           create_sql_ = "CREATE#{' TEMPORARY' if options_[:temporary]} TABLE "
@@ -195,7 +196,7 @@ module ActiveRecord
         end
         
         
-        def drop_table(table_name_, options_={})
+        def drop_table(table_name_)
           execute("DELETE from geometry_columns where f_table_name='#{quote_string(table_name_.to_s)}'")
           super
         end
