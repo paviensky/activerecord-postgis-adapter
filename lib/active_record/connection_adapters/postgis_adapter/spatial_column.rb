@@ -135,8 +135,10 @@ module ActiveRecord
         
         def type_cast_code(var_name_)
           if type == :spatial
+            tables = Hash[ActiveRecord::Base.send(:descendants).collect{|c| [c.table_name, c.name]}]
+            model_klass = tables[@table_name]
             "::ActiveRecord::ConnectionAdapters::PostGISAdapter::SpatialColumn.convert_to_geometry("+
-              "#{var_name_}, self.class.rgeo_factory_settings, self.class.table_name, "+
+              "#{var_name_}, #{model_klass}.rgeo_factory_settings, #{model_klass}.table_name, "+
               "#{name.inspect}, #{@geographic ? 'true' : 'false'}, #{@srid.inspect}, "+
               "#{@has_z ? 'true' : 'false'}, #{@has_m ? 'true' : 'false'})"
           else
